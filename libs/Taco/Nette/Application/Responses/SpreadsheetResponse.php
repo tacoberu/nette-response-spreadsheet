@@ -16,11 +16,12 @@ namespace Taco\Nette\Application\Responses;
 
 
 use Nette,
-	Nette\Image,
 	Nette\Application,
 	Nette\Http\IRequest,
 	Nette\Http\IResponse;
 use Traversable,
+	ArrayIterator,
+	InvalidArgumentException,
 	DateTime;
 
 
@@ -75,8 +76,16 @@ class SpreadsheetResponse extends Nette\Object implements Application\IResponse
 	 * @param Traversable $data
 	 * @param XlsProcesor $procesor
 	 */
-	function __construct(Traversable $data, array $headers = array(), XlsProcesor $procesor = Null)
+	function __construct($data, array $headers = array(), XlsProcesor $procesor = Null)
 	{
+		if (! $data instanceof Traversable && ! is_array($data)) {
+			throw new InvalidArgumentException('Input data must be array or Traversable.');
+		}
+
+		if (is_array($data)) {
+			$data = new ArrayIterator($data);
+		}
+
 		$this->headers = $headers;
 		$this->data = $data;
 		if ($procesor) {
