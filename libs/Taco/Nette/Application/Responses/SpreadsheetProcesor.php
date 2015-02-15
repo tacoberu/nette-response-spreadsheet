@@ -182,7 +182,14 @@ class SpreadsheetProcesor
 		$rowSymbol = $this->firstRow;
 		foreach ($data as $row) {
 			if (! is_array($row) && ! $row instanceof Traversable) {
-				continue;
+
+				// Pokusíme se převést na pole.
+				if (get_class($row) === 'stdClass') {
+					$row = (object)$row;
+				}
+				else {
+					continue;
+				}
 			}
 
 			$columnSymbol = 'A';
