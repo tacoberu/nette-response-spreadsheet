@@ -32,16 +32,16 @@ class SpreadsheetProcesor
 
 
 	/** @var string */
-	private $version = 'Excel5';
+	private $format = 'Excel5';
 
 
 	/**
 	 * Constructor injection.
 	 */
-	function __construct($version = Null)
+	function __construct($format = Null)
 	{
-		if ($version) {
-			$this->version = $version;
+		if ($format) {
+			$this->format = $format;
 		}
 	}
 
@@ -87,7 +87,7 @@ class SpreadsheetProcesor
 	 */
 	function getContentType()
 	{
-		switch ($this->version) {
+		switch ($this->format) {
 			case 'Excel2007':
 				return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 			case 'Excel5':
@@ -105,7 +105,7 @@ class SpreadsheetProcesor
 			case 'CSV':
 				return 'text/csv';
 			default:
-				throw new LogicException("Unsupported type of sheet: `{$this->version}'.");
+				throw new LogicException("Unsupported type of sheet: `{$this->format}'.");
 		}
 	}
 
@@ -116,7 +116,7 @@ class SpreadsheetProcesor
 	 */
 	function getExtension()
 	{
-		switch ($this->version) {
+		switch ($this->format) {
 			case 'Excel2007':
 				return 'xlsx';
 			case 'Excel5':
@@ -134,7 +134,7 @@ class SpreadsheetProcesor
 			case 'CSV':
 				return 'csv';
 			default:
-				throw new LogicException("Unsupported type of sheet: `{$this->version}'.");
+				throw new LogicException("Unsupported type of sheet: `{$this->format}'.");
 		}
 	}
 
@@ -151,7 +151,7 @@ class SpreadsheetProcesor
 		$procesor->setActiveSheetIndex(0);
 		$this->fill($procesor->getActiveSheet(), $xs);
 
-		$writer = PHPExcel_IOFactory::createWriter($procesor, $this->version);
+		$writer = PHPExcel_IOFactory::createWriter($procesor, $this->format);
 		$writer->save('php://output');
 	}
 

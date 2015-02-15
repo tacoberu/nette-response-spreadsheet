@@ -39,10 +39,10 @@ class SpreadsheetResponse extends Nette\Object implements Application\IResponse
 
 
 	/**
-	 * Jméno souboru posílané současně s exportem,
+	 * Formát souboru. Viz SpreadsheetProcesor.
 	 * @var string
 	 */
-	private $version = Null;
+	private $format = Null;
 
 
 	/**
@@ -92,6 +92,17 @@ class SpreadsheetResponse extends Nette\Object implements Application\IResponse
 	function setFilename($s)
 	{
 		$this->filename = (string)$s;
+		return $this;
+	}
+
+
+
+	/**
+	 * Formát souboru. Viz SpreadsheetProcesor.
+	 */
+	function setFormat($s)
+	{
+		$this->format = (string)$s;
 		return $this;
 	}
 
@@ -232,7 +243,7 @@ class SpreadsheetResponse extends Nette\Object implements Application\IResponse
 	private function getProcesor()
 	{
 		if (empty($this->procesor)) {
-			$this->procesor = new SpreadsheetProcesor($this->version);
+			$this->procesor = new SpreadsheetProcesor($this->format);
 		}
 		return $this->procesor;
 	}
