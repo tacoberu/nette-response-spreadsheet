@@ -1,10 +1,11 @@
 {
     "name": "tacoberu/nette-response-spreadsheet",
-    "description": "Spreadsheet Nette responses.",
+    "description": "Spreadsheet Nette responses. Support csv, msxml, xsl, xslt, ods, slk, gnumeric, html.",
     "type": "library",
     "require": {
     	"php" : ">=5.3.0",
-		"phpoffice/phpexcel": "1.7.9"
+		"phpoffice/phpexcel": "1.7.9",
+		"box/spout": "dev-master"
     },
     "require-dev": {
         "php" : ">=5.3.0",

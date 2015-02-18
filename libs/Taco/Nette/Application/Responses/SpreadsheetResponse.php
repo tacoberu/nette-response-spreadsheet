@@ -23,6 +23,7 @@ use Traversable,
 	ArrayIterator,
 	InvalidArgumentException,
 	DateTime;
+use Box\Spout\Common\Type;
 
 
 /**
@@ -43,7 +44,7 @@ class SpreadsheetResponse extends Nette\Object implements Application\IResponse
 	 * Formát souboru. Viz SpreadsheetProcesor.
 	 * @var string
 	 */
-	private $format = Null;
+	private $format = 'Excel2007';
 
 
 	/**
@@ -76,7 +77,7 @@ class SpreadsheetResponse extends Nette\Object implements Application\IResponse
 	 * @param Traversable $data
 	 * @param XlsProcesor $procesor
 	 */
-	function __construct($data, array $headers = array(), XlsProcesor $procesor = Null)
+	function __construct($data, array $headers = array(), SpreadsheetProcesor $procesor = Null)
 	{
 		if (! $data instanceof Traversable && ! is_array($data)) {
 			throw new InvalidArgumentException('Input data must be array or Traversable.');
@@ -252,7 +253,16 @@ class SpreadsheetResponse extends Nette\Object implements Application\IResponse
 	private function getProcesor()
 	{
 		if (empty($this->procesor)) {
-			$this->procesor = new SpreadsheetProcesor($this->format);
+			switch (strtolower($this->format)) {
+				case 'csv':
+					$this->procesor = new SpoutSpreadsheetProcesor(Type::CSV);
+					break;
+				case 'excel2007':
+					$this->procesor = new SpoutSpreadsheetProcesor(Type::XLSX);
+					break;
+				default:
+					$this->procesor = new PHPExcelSpreadsheetProcesor($this->format);
+			}
 		}
 		return $this->procesor;
 	}
