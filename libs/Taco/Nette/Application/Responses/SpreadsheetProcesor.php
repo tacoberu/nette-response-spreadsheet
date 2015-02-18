@@ -210,6 +210,10 @@ class SpreadsheetProcesor
 			return $cell;
 		}
 
+		if (method_exists($cell, '__toString')) {
+			return (string)$cell;
+		}
+
 		if (method_exists($cell, 'render')) {
 			ob_start();
 				$cell->render();
