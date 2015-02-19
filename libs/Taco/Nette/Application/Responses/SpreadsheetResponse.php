@@ -143,7 +143,7 @@ class SpreadsheetResponse extends Nette\Object implements Application\IResponse
 	/**
 	 * @param string
 	 */
-	function getModified(DateTime $m)
+	function setModified(DateTime $m)
 	{
 		$this->properties['modified'] = $m->format('Y-m-d H:i:s');
 		return $this;
@@ -239,9 +239,15 @@ class SpreadsheetResponse extends Nette\Object implements Application\IResponse
 
 
 
+	/**
+	 * Without headers.
+	 */
 	function test()
 	{
-		$this->getProcesor()->echo_($this->data);
+		$this->getProcesor()
+				->setProperties($this->properties)
+				->setHeaders($this->headers)
+				->echo_($this->data);
 	}
 
 
