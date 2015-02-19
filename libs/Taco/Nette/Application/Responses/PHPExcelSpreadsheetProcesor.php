@@ -27,10 +27,6 @@ use Traversable,
 class PHPExcelSpreadsheetProcesor implements SpreadsheetProcesor
 {
 
-	/** @var int */
-	private $firstRow = 1;
-
-
 	/** @var string */
 	private $version = 'Excel5';
 
@@ -53,30 +49,6 @@ class PHPExcelSpreadsheetProcesor implements SpreadsheetProcesor
 		foreach ($props as $name => $value) {
 			$obj->{'set' . ucfirst($name)}($value);
 		}
-		return $this;
-	}
-
-
-
-	function setHeaders(array $headers = array())
-	{
-		if (! count($headers)) {
-			return $this;
-		}
-
-		$procesor = $this->getProcesor();
-		$procesor->setActiveSheetIndex(0);
-		$sheet = $procesor->getActiveSheet();
-
-		$rowSymbol = $this->firstRow;
-		$columnSymbol = 'A';
-		foreach ($headers as $name) {
-			$cell = $sheet->setCellValue($columnSymbol . $rowSymbol, $name, True);
-			//~ $cell->getStyle()->getFont()->setBold(True);
-			$columnSymbol++;
-		}
-
-		$this->firstRow++;
 		return $this;
 	}
 
@@ -142,14 +114,28 @@ class PHPExcelSpreadsheetProcesor implements SpreadsheetProcesor
 
 	/**
 	 * Render cell
-	 * @param mixed $value
+	 * @param array list of sheet.
 	 * @return string
 	 */
-	function echo_(Traversable $xs)
+	function echo_(array $sheets)
 	{
 		$procesor = $this->getProcesor();
-		$procesor->setActiveSheetIndex(0);
-		$this->fill($procesor->getActiveSheet(), $xs);
+
+		foreach ($sheets as $index => $pack) {
+			if (0 == $index) {
+				$sheet = $procesor->getSheet();
+			}
+			else {
+				$sheet = $procesor->createSheet();
+			}
+
+			if ($pack->name) {
+				$sheet->setTitle($pack->name);
+			}
+
+			$next = $this->fillHeaders($sheet, $pack->headers);
+			$this->fillRows($sheet, $pack->rows, $next);
+		}
 
 		$writer = PHPExcel_IOFactory::createWriter($procesor, $this->version);
 		$writer->save('php://output');
@@ -172,14 +158,39 @@ class PHPExcelSpreadsheetProcesor implements SpreadsheetProcesor
 
 
 	/**
+	 * Naplnit první řádek hlavičkou.
+	 * @return int Jaký je následující řádek.
+	 */
+	private function fillHeaders($sheet, array $headers = array())
+	{
+		$rowSymbol = 1;
+
+		if (! count($headers)) {
+			return $rowSymbol;
+		}
+
+		$columnSymbol = 'A';
+		foreach ($headers as $name) {
+			$cell = $sheet->setCellValue($columnSymbol . $rowSymbol, $name, True);
+			//~ $cell->getStyle()->getFont()->setBold(True);
+			$columnSymbol++;
+		}
+
+		$rowSymbol++;
+		return $rowSymbol;
+	}
+
+
+
+	/**
 	 * Naplnit sešit daty.
 	 *
 	 * @param Traversable $data - data k zpracování
 	 * @return PHPExcel
 	 */
-	private function fill($sheet, Traversable $data)
+	private function fillRows($sheet, Traversable $data, $start = 1)
 	{
-		$rowSymbol = $this->firstRow;
+		$rowSymbol = $start;
 		foreach ($data as $row) {
 			if (! is_array($row) && ! $row instanceof Traversable) {
 				continue;
@@ -192,9 +203,6 @@ class PHPExcelSpreadsheetProcesor implements SpreadsheetProcesor
 			}
 
 			$rowSymbol++;
-			if ($rowSymbol > 7560) {
-				break;
-			}
 		}
 	}
 

@@ -25,11 +25,10 @@ interface SpreadsheetProcesor
 {
 
 
+	/**
+	 * Meta information for sample: title, description, etc.
+	 */
 	function setProperties(array $props = array());
-
-
-
-	function setHeaders(array $headers = array());
 
 
 
@@ -41,7 +40,7 @@ interface SpreadsheetProcesor
 
 
 	/**
-	 * @return string
+	 * @return string for sample: xslx
 	 */
 	function getExtension();
 
@@ -52,7 +51,7 @@ interface SpreadsheetProcesor
 	 * @param mixed $value
 	 * @return string
 	 */
-	function echo_(Traversable $xs);
+	function echo_(array $xs);
 
 
 

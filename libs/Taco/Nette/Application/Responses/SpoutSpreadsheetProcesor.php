@@ -65,18 +65,6 @@ class SpoutSpreadsheetProcesor implements SpreadsheetProcesor
 
 
 
-	function setHeaders(array $headers = array())
-	{
-		if (! count($headers)) {
-			return $this;
-		}
-
-		$this->headers = $headers;
-		return $this;
-	}
-
-
-
 	/**
 	 * @return string
 	 */
@@ -120,14 +108,26 @@ class SpoutSpreadsheetProcesor implements SpreadsheetProcesor
 	 * @param mixed $value
 	 * @return string
 	 */
-	function echo_(Traversable $xs)
+	function echo_(array $sheets)
 	{
 		$procesor = $this->getProcesor();
 		$procesor->openToBrowser($this->filename);
-		if (count($this->headers)) {
-			$procesor->addRow($this->headers);
+		foreach ($sheets as $index => $pack) {
+			if ($index > 0) {
+				$procesor->addNewSheetAndMakeItCurrent();
+			}
+
+			if ($pack->name) {
+				//~ $sheet->setTitle($pack->name);
+			}
+
+			if (count($pack->headers)) {
+				$this->fillHeaders($pack->headers);
+			}
+
+			$this->fillRows($procesor, $pack->rows);
 		}
-		$this->fill($procesor, $xs);
+
 		$procesor->close();
 	}
 
@@ -148,12 +148,26 @@ class SpoutSpreadsheetProcesor implements SpreadsheetProcesor
 
 
 	/**
+	 * Naplnit první řádek hlavičkou.
+	 * @return int Jaký je následující řádek.
+	 */
+	private function fillHeaders($sheet, array $headers = array())
+	{
+		if (! count($headers)) {
+			return;
+		}
+		$procesor->addRow($headers);
+	}
+
+
+
+	/**
 	 * Naplnit sešit daty.
 	 *
 	 * @param Traversable $data - data k zpracování
 	 * @return PHPExcel
 	 */
-	private function fill($sheet, Traversable $data)
+	private function fillRows($sheet, Traversable $data)
 	{
 		foreach ($data as $row) {
 			if (! is_array($row) && ! $row instanceof Traversable) {

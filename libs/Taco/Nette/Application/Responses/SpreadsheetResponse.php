@@ -61,37 +61,45 @@ class SpreadsheetResponse extends Nette\Object implements Application\IResponse
 
 
 	/**
-	 * @var Traversable
+	 * @var array
 	 */
-	private $headers;
-
-
-	/**
-	 * @var Traversable
-	 */
-	private $data;
+	private $data = array();
 
 
 	/**
 	 * @param Traversable $headers
 	 * @param Traversable $data
-	 * @param XlsProcesor $procesor
+	 * @param SpreadsheetProcesor $procesor
 	 */
-	function __construct($data, array $headers = array(), SpreadsheetProcesor $procesor = Null)
+	function __construct($rows, array $headers = array(), SpreadsheetProcesor $procesor = Null)
 	{
-		if (! $data instanceof Traversable && ! is_array($data)) {
-			throw new InvalidArgumentException('Input data must be array or Traversable.');
-		}
-
-		if (is_array($data)) {
-			$data = new ArrayIterator($data);
-		}
-
-		$this->headers = $headers;
-		$this->data = $data;
+		$this->addSheet($rows, $headers);
 		if ($procesor) {
 			$this->procesor = $procesor;
 		}
+	}
+
+
+
+	/**
+	 * Volitelné přiřazení jména souboru.
+	 */
+	function addSheet($rows, array $headers = array(), $name = Null)
+	{
+		if (! $rows instanceof Traversable && ! is_array($rows)) {
+			throw new InvalidArgumentException('Input rows must be array or Traversable.');
+		}
+
+		if (is_array($rows)) {
+			$rows = new ArrayIterator($rows);
+		}
+
+		$this->data[] = (object) array(
+				'headers' => $headers,
+				'rows' => $rows,
+				'name' => $name,
+				);
+		return $this;
 	}
 
 
@@ -168,6 +176,7 @@ class SpreadsheetResponse extends Nette\Object implements Application\IResponse
 	function setTitle($s)
 	{
 		$this->properties['title'] = (string)$s;
+		$this->data[0]->name = (string)$s;
 		return $this;
 	}
 
@@ -233,7 +242,6 @@ class SpreadsheetResponse extends Nette\Object implements Application\IResponse
 
 		$this->getProcesor()
 				->setProperties($this->properties)
-				->setHeaders($this->headers)
 				->echo_($this->data);
 	}
 
