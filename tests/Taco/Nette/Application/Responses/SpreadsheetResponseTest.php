@@ -46,6 +46,9 @@ class SpreadsheetResponseTest extends PHPUnit_Framework_TestCase
 		$response->expects($this->at(2))
 			->method('setHeader')
 			->with('Content-Transfer-Encoding', 'binary');
+		$response->expects($this->at(4))
+			->method('setHeader')
+			->with('Pragma', 'public');
 
 		$procesor = $this->getMock('Taco\Nette\Application\Responses\SpreadsheetProcesor',
 				array('setProperties', 'setHeaders', 'getContentType', 'getExtension', 'echo_'),
@@ -89,6 +92,9 @@ class SpreadsheetResponseTest extends PHPUnit_Framework_TestCase
 		$response->expects($this->at(3))
 			->method('setHeader')
 			->with('Content-Disposition', 'attachment;filename="abc.ext.xslx"');
+		$response->expects($this->at(4))
+			->method('setHeader')
+			->with('Pragma', 'public');
 
 		$procesor = $this->getMock('Taco\Nette\Application\Responses\SpreadsheetProcesor',
 				array('setProperties', 'setHeaders', 'getContentType', 'getExtension', 'echo_'),
@@ -142,6 +148,9 @@ class SpreadsheetResponseTest extends PHPUnit_Framework_TestCase
 		$response->expects($this->at(3))
 			->method('setHeader')
 			->with('Content-Disposition', 'attachment;filename="abc.ext.xslx"');
+		$response->expects($this->at(4))
+			->method('setHeader')
+			->with('Pragma', 'public');
 
 		$procesor = $this->getMock('Taco\Nette\Application\Responses\SpreadsheetProcesor',
 				array('setProperties', 'setHeaders', 'getContentType', 'getExtension', 'echo_'),
@@ -201,6 +210,9 @@ class SpreadsheetResponseTest extends PHPUnit_Framework_TestCase
 		$response->expects($this->at(3))
 			->method('setHeader')
 			->with('Content-Disposition', 'attachment;filename="abc.ext.xslx"');
+		$response->expects($this->at(4))
+			->method('setHeader')
+			->with('Pragma', 'public');
 
 		$procesor = $this->getMock('Taco\Nette\Application\Responses\SpreadsheetProcesor',
 				array('setProperties', 'setHeaders', 'getContentType', 'getExtension', 'echo_'),

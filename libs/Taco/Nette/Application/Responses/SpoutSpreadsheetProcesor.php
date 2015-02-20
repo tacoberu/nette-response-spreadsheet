@@ -16,9 +16,12 @@ namespace Taco\Nette\Application\Responses;
 
 
 use Traversable,
-	LogicException;
+	LogicException,
+	stdClass;
 use Box\Spout\Writer\WriterFactory,
-	Box\Spout\Common\Type;
+	Box\Spout\Common\Type,
+	Box\Spout\Common\Exception\UnsupportedTypeException,
+	Box\Spout\Common\Helper\GlobalFunctionsHelper;
 
 
 /**
@@ -28,22 +31,18 @@ use Box\Spout\Writer\WriterFactory,
 class SpoutSpreadsheetProcesor implements SpreadsheetProcesor
 {
 
-	/** @var array */
-	private $headers = array();
+	/** @var WriterInterface */
+	private $procesor;
 
 
 	/** @var string */
 	private $version = Type::XLSX;
 
 
-	/** @var string */
-	private $filename = 'spreadsheet';
-
-
 	/**
 	 * Constructor injection.
 	 */
-	function __construct($version = Null)
+	function __construct($version = Null, $procesor = Null)
 	{
 		if ($version) {
 			if (! in_array($version, array(Type::XLSX, Type::CSV))) {
@@ -51,6 +50,7 @@ class SpoutSpreadsheetProcesor implements SpreadsheetProcesor
 			}
 			$this->version = $version;
 		}
+		$this->procesor = $procesor;
 	}
 
 
@@ -111,7 +111,7 @@ class SpoutSpreadsheetProcesor implements SpreadsheetProcesor
 	function echo_(array $sheets)
 	{
 		$procesor = $this->getProcesor();
-		$procesor->openToBrowser($this->filename);
+		$procesor->openToBrowser();
 		foreach ($sheets as $index => $pack) {
 			if ($index > 0) {
 				$procesor->addNewSheetAndMakeItCurrent();
@@ -140,9 +140,38 @@ class SpoutSpreadsheetProcesor implements SpreadsheetProcesor
 	private function getProcesor()
 	{
 		if (empty($this->procesor)) {
-			$this->procesor = WriterFactory::create($this->version);
+			$this->procesor = $this->createProcesor($this->version);
 		}
 		return $this->procesor;
+	}
+
+
+
+	/**
+	 * This creates an instance of the appropriate writer, given the type of the file to be read
+	 *
+	 * @param  string $writerType Type of the writer to instantiate
+	 * @return \Box\Spout\Writer\CSV|\Box\Spout\Writer\XLSX
+	 * @throws \Box\Spout\Common\Exception\UnsupportedTypeException
+	 */
+	private function createProcesor($writerType)
+	{
+		$writer = null;
+
+		switch ($writerType) {
+			case Type::CSV:
+				$writer = new SpoutCSVWriter();
+				break;
+			case Type::XLSX:
+				$writer = new SpoutXLSXWriter();
+				break;
+			default:
+				throw new UnsupportedTypeException('No writers supporting the given type: ' . $writerType);
+		}
+
+		$writer->setGlobalFunctionsHelper(new GlobalFunctionsHelper());
+
+		return $writer;
 	}
 
 
@@ -170,7 +199,7 @@ class SpoutSpreadsheetProcesor implements SpreadsheetProcesor
 	private function fillRows($sheet, Traversable $data)
 	{
 		foreach ($data as $row) {
-			if (! is_array($row) && ! $row instanceof Traversable) {
+			if (! is_array($row) && ! $row instanceof Traversable && ! $row instanceof stdClass) {
 				continue;
 			}
 
@@ -203,14 +232,6 @@ class SpoutSpreadsheetProcesor implements SpreadsheetProcesor
 		}
 
 		return (string)$cell;
-	}
-
-
-
-	private function setFilename($filename)
-	{
-		$this->filename = $filename;
-		return $this;
 	}
 
 

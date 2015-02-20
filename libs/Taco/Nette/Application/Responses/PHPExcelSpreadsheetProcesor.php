@@ -27,6 +27,9 @@ use Traversable,
 class PHPExcelSpreadsheetProcesor implements SpreadsheetProcesor
 {
 
+	private $procesor;
+
+
 	/** @var string */
 	private $version = 'Excel5';
 
@@ -34,11 +37,12 @@ class PHPExcelSpreadsheetProcesor implements SpreadsheetProcesor
 	/**
 	 * Constructor injection.
 	 */
-	function __construct($version = Null)
+	function __construct($version = Null, $procesor = Null)
 	{
 		if ($version) {
 			$this->version = $version;
 		}
+		$this->procesor = $procesor;
 	}
 
 
@@ -192,7 +196,7 @@ class PHPExcelSpreadsheetProcesor implements SpreadsheetProcesor
 	{
 		$rowSymbol = $start;
 		foreach ($data as $row) {
-			if (! is_array($row) && ! $row instanceof Traversable) {
+			if (! is_array($row) && ! $row instanceof Traversable && ! $row instanceof stdClass) {
 				continue;
 			}
 

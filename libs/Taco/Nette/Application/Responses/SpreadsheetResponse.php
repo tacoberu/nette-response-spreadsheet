@@ -35,7 +35,7 @@ class SpreadsheetResponse extends Nette\Object implements Application\IResponse
 
 	/**
 	 * Implementace konvertoru do XLS.
-	 * @var XlsProcesor
+	 * @var SpreadsheetProcesor
 	 */
 	private $procesor;
 
@@ -51,7 +51,7 @@ class SpreadsheetResponse extends Nette\Object implements Application\IResponse
 	 * Jméno souboru posílané současně s exportem,
 	 * @var string
 	 */
-	private $filename;
+	private $filename = 'spreadsheet';
 
 
 	/**
@@ -67,8 +67,8 @@ class SpreadsheetResponse extends Nette\Object implements Application\IResponse
 
 
 	/**
-	 * @param Traversable $headers
-	 * @param Traversable $data
+	 * @param array $headers
+	 * @param Traversable|array $data
 	 * @param SpreadsheetProcesor $procesor
 	 */
 	function __construct($rows, array $headers = array(), SpreadsheetProcesor $procesor = Null)
@@ -171,6 +171,7 @@ class SpreadsheetResponse extends Nette\Object implements Application\IResponse
 
 
 	/**
+	 * Název dokumentu a prvního listu.
 	 * @param string
 	 */
 	function setTitle($s)
@@ -239,6 +240,13 @@ class SpreadsheetResponse extends Nette\Object implements Application\IResponse
 		if ($this->filename) {
 			$httpResponse->setHeader('Content-Disposition', 'attachment;filename="' . $this->filename . '.' . $this->getProcesor()->getExtension() . '"');
 		}
+
+		// When forcing the download of a file over SSL,IE8 and lower browsers fail
+		// if the Cache-Control and Pragma headers are not set.
+		//
+		// @see http://support.microsoft.com/KB/323308
+		// @see https://github.com/liuggio/ExcelBundle/issues/45
+		$httpResponse->setHeader('Pragma', 'public');
 
 		$this->getProcesor()
 				->setProperties($this->properties)
