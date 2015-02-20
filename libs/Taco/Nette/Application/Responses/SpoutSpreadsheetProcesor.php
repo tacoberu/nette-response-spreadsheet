@@ -122,7 +122,7 @@ class SpoutSpreadsheetProcesor implements SpreadsheetProcesor
 			}
 
 			if (count($pack->headers)) {
-				$this->fillHeaders($pack->headers);
+				$this->fillHeaders($procesor, $pack->headers);
 			}
 
 			$this->fillRows($procesor, $pack->rows);
@@ -156,7 +156,7 @@ class SpoutSpreadsheetProcesor implements SpreadsheetProcesor
 		if (! count($headers)) {
 			return;
 		}
-		$procesor->addRow($headers);
+		$sheet->addRow($headers);
 	}
 
 
