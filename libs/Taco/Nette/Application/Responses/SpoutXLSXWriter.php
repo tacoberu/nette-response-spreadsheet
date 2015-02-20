@@ -32,7 +32,7 @@ class SpoutXLSXWriter extends XLSX
      * @return \Box\Spout\Writer\AbstractWriter
      * @throws \Box\Spout\Common\Exception\IOException If the writer cannot be opened
      */
-    function openToBrowser()
+    function openToBrowser($_)
     {
         $this->filePointer = $this->globalFunctionsHelper->fopen('php://output', 'w');
         $this->throwIfFilePointerIsNotAvailable();

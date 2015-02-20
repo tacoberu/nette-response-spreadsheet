@@ -111,7 +111,7 @@ class SpoutSpreadsheetProcesor implements SpreadsheetProcesor
 	function echo_(array $sheets)
 	{
 		$procesor = $this->getProcesor();
-		$procesor->openToBrowser();
+		$procesor->openToBrowser('');
 		foreach ($sheets as $index => $pack) {
 			if ($index > 0) {
 				$procesor->addNewSheetAndMakeItCurrent();
