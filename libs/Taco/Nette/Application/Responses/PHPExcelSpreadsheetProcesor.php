@@ -34,6 +34,10 @@ class PHPExcelSpreadsheetProcesor implements SpreadsheetProcesor
 	private $version = 'Excel5';
 
 
+	/** @var array */
+	private $postProcessing = array();
+
+
 	/**
 	 * Constructor injection.
 	 */
@@ -53,6 +57,14 @@ class PHPExcelSpreadsheetProcesor implements SpreadsheetProcesor
 		foreach ($props as $name => $value) {
 			$obj->{'set' . ucfirst($name)}($value);
 		}
+		return $this;
+	}
+
+
+
+	function setPostProcessing(array $xs)
+	{
+		$this->postProcessing = $xs;
 		return $this;
 	}
 
@@ -202,7 +214,7 @@ class PHPExcelSpreadsheetProcesor implements SpreadsheetProcesor
 
 			$columnSymbol = 'A';
 			foreach ($row as $name => $cell) {
-				$sheet->setCellValue($columnSymbol . $rowSymbol, $this->formatCellValue($name, $cell));
+				$sheet->setCellValue($columnSymbol . $rowSymbol, $this->applyPostProcessing($this->formatCellValue($name, $cell)));
 				$columnSymbol++;
 			}
 
@@ -232,5 +244,18 @@ class PHPExcelSpreadsheetProcesor implements SpreadsheetProcesor
 
 		return (string)$cell;
 	}
+
+
+
+	private function applyPostProcessing($val)
+	{
+		foreach ($this->postProcessing as $method) {
+			if (is_string($method)) {
+				$val = $method($val);
+			}
+		}
+		return $val;
+	}
+
 
 }

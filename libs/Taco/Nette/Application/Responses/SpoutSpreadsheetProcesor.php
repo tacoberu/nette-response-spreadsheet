@@ -39,6 +39,10 @@ class SpoutSpreadsheetProcesor implements SpreadsheetProcesor
 	private $version = Type::XLSX;
 
 
+	/** @var array */
+	private $postProcessing = array();
+
+
 	/**
 	 * Constructor injection.
 	 */
@@ -60,6 +64,14 @@ class SpoutSpreadsheetProcesor implements SpreadsheetProcesor
 		foreach ($props as $name => $value) {
 			$this->{'set' . ucfirst($name)}($value);
 		}
+		return $this;
+	}
+
+
+
+	function setPostProcessing(array $xs)
+	{
+		$this->postProcessing = $xs;
 		return $this;
 	}
 
@@ -205,7 +217,7 @@ class SpoutSpreadsheetProcesor implements SpreadsheetProcesor
 
 			$line = [];
 			foreach ($row as $name => $cell) {
-				$line[] = $this->formatCellValue($name, $cell);
+				$line[] = $this->applyPostProcessing($this->formatCellValue($name, $cell));
 			}
 			$sheet->addRow($line);
 		}
@@ -232,6 +244,18 @@ class SpoutSpreadsheetProcesor implements SpreadsheetProcesor
 		}
 
 		return (string)$cell;
+	}
+
+
+
+	private function applyPostProcessing($val)
+	{
+		foreach ($this->postProcessing as $method) {
+			if (is_string($method)) {
+				$val = $method($val);
+			}
+		}
+		return $val;
 	}
 
 

@@ -63,6 +63,12 @@ class SpreadsheetResponse extends Nette\Object implements Application\IResponse
 	/**
 	 * @var array
 	 */
+	private $postProcessing = array();
+
+
+	/**
+	 * @var array
+	 */
 	private $data = array();
 
 
@@ -99,6 +105,14 @@ class SpreadsheetResponse extends Nette\Object implements Application\IResponse
 				'rows' => $rows,
 				'name' => $name,
 				);
+		return $this;
+	}
+
+
+
+	function addPostProcesing($method)
+	{
+		$this->postProcessing[] = $method;
 		return $this;
 	}
 
@@ -250,6 +264,7 @@ class SpreadsheetResponse extends Nette\Object implements Application\IResponse
 
 		$this->getProcesor()
 				->setProperties($this->properties)
+				->setPostProcessing($this->postProcessing)
 				->echo_($this->data);
 	}
 
@@ -263,6 +278,7 @@ class SpreadsheetResponse extends Nette\Object implements Application\IResponse
 		$this->getProcesor()
 				->setProperties($this->properties)
 				->setHeaders($this->headers)
+				->setPostProcessing($this->postProcessing)
 				->echo_($this->data);
 	}
 

@@ -31,6 +31,11 @@ interface SpreadsheetProcesor
 	function setProperties(array $props = array());
 
 
+	/**
+	 * @param array of methods
+	 */
+	function setPostProcessing(array $xs);
+
 
 	/**
 	 * @return string
