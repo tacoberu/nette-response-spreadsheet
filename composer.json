@@ -6,7 +6,7 @@
 		"php" : ">=5.3.0",
 		"nette/application": ">=2.2",
 		"phpoffice/phpexcel": ">=1.7.9",
-		"box/spout": ">=1.0.1"
+		"box/spout": "1.*"
 	},
 	"require-dev": {
 		"php" : ">=5.3.0",
