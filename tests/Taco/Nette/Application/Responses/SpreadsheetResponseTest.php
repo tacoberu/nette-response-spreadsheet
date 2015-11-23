@@ -51,13 +51,17 @@ class SpreadsheetResponseTest extends PHPUnit_Framework_TestCase
 			->with('Pragma', 'public');
 
 		$procesor = $this->getMock('Taco\Nette\Application\Responses\SpreadsheetProcesor',
-				array('setProperties', 'setHeaders', 'getContentType', 'getExtension', 'echo_'),
+				array('setProperties', 'setHeaders', 'setPostProcessing', 'getContentType', 'getExtension', 'echo_'),
 				array(), '', False);
 		$procesor->expects($this->once())
 			->method('getContentType')
 			->will($this->returnValue('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'));
 		$procesor->expects($this->once())
 			->method('setProperties')
+			->with(array())
+			->will($this->returnSelf());
+		$procesor->expects($this->once())
+			->method('setPostProcessing')
 			->with(array())
 			->will($this->returnSelf());
 		$procesor->expects($this->once())
@@ -97,7 +101,7 @@ class SpreadsheetResponseTest extends PHPUnit_Framework_TestCase
 			->with('Pragma', 'public');
 
 		$procesor = $this->getMock('Taco\Nette\Application\Responses\SpreadsheetProcesor',
-				array('setProperties', 'setHeaders', 'getContentType', 'getExtension', 'echo_'),
+				array('setProperties', 'setHeaders', 'setPostProcessing', 'getContentType', 'getExtension', 'echo_'),
 				array(), '', False);
 		$procesor->expects($this->once())
 			->method('getContentType')
@@ -107,6 +111,10 @@ class SpreadsheetResponseTest extends PHPUnit_Framework_TestCase
 			->will($this->returnValue('xslx'));
 		$procesor->expects($this->once())
 			->method('setProperties')
+			->with(array())
+			->will($this->returnSelf());
+		$procesor->expects($this->once())
+			->method('setPostProcessing')
 			->with(array())
 			->will($this->returnSelf());
 		$procesor->expects($this->once())
@@ -153,7 +161,7 @@ class SpreadsheetResponseTest extends PHPUnit_Framework_TestCase
 			->with('Pragma', 'public');
 
 		$procesor = $this->getMock('Taco\Nette\Application\Responses\SpreadsheetProcesor',
-				array('setProperties', 'setHeaders', 'getContentType', 'getExtension', 'echo_'),
+				array('setProperties', 'setHeaders', 'setPostProcessing', 'getContentType', 'getExtension', 'echo_'),
 				array(), '', False);
 		$procesor->expects($this->once())
 			->method('getContentType')
@@ -163,6 +171,10 @@ class SpreadsheetResponseTest extends PHPUnit_Framework_TestCase
 			->will($this->returnValue('xslx'));
 		$procesor->expects($this->once())
 			->method('setProperties')
+			->with(array())
+			->will($this->returnSelf());
+		$procesor->expects($this->once())
+			->method('setPostProcessing')
 			->with(array())
 			->will($this->returnSelf());
 		$procesor->expects($this->once())
@@ -215,7 +227,7 @@ class SpreadsheetResponseTest extends PHPUnit_Framework_TestCase
 			->with('Pragma', 'public');
 
 		$procesor = $this->getMock('Taco\Nette\Application\Responses\SpreadsheetProcesor',
-				array('setProperties', 'setHeaders', 'getContentType', 'getExtension', 'echo_'),
+				array('setProperties', 'setHeaders', 'setPostProcessing', 'getContentType', 'getExtension', 'echo_'),
 				array(), '', False);
 		$procesor->expects($this->once())
 			->method('getContentType')
@@ -225,6 +237,10 @@ class SpreadsheetResponseTest extends PHPUnit_Framework_TestCase
 			->will($this->returnValue('xslx'));
 		$procesor->expects($this->once())
 			->method('setProperties')
+			->with(array())
+			->will($this->returnSelf());
+		$procesor->expects($this->once())
+			->method('setPostProcessing')
 			->with(array())
 			->will($this->returnSelf());
 		$procesor->expects($this->once())
